@@ -5,6 +5,7 @@ declare(strict_types=1);
 //autoloader ce include automat tot ce este in /src
 require dirname(__DIR__) . "/vendor/autoload.php"; 
 
+set_error_handler("ErrorHandler::handleError");
 //ini_set("diplay_errors","On"); //enable display errors
 set_exception_handler("ErrorHandler::handleException");
 
