@@ -17,13 +17,18 @@ if ($resource != "persoana") {
     exit;
 }
 
-$database = new Database($_ENV["DB_HOST"],$_ENV["DB_NAME"],$_ENV["DB_USER"],$_ENV["DB_PASS"]);
+$database = new Database($_ENV["DB_HOST"],
+                         $_ENV["DB_NAME"],
+                         $_ENV["DB_USER"],
+                         $_ENV["DB_PASS"]);
 
 $user_gateway = new UserGateway($database);
 
-$auth = new Auth($user_gateway);
+$codec = new JWTCodec($_ENV["SECRET_KEY"]);
 
-if(!$auth->authenticateAPIKey()){
+$auth = new Auth($user_gateway,$codec);
+
+if(!$auth->authenticateAccessToken()){ //autentificam userul fara sa il conectam la DB
     exit;
 }
 
