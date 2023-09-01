@@ -37,32 +37,44 @@ class PersoanaGateway
 
     public function create(array $data): string
     {
-        
-        $sql = "INSERT INTO persoana (CNP, Nume, Prenume, Oras, Tara, Data_de_nastere)
-                VALUES (:cnp, :nume, :prenume, :oras, :tara, :data_nasterii)";
-        
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(":cnp", $data["cnp"], PDO::PARAM_STR);
-        $stmt->bindValue(":nume", $data["nume"], PDO::PARAM_STR);
-        $stmt->bindValue(":prenume", $data["prenume"], PDO::PARAM_STR);
+        // Check if the provided CNP already exists
+        $cnp = $data["cnp"];
+        $checkSql = "SELECT COUNT(*) FROM persoana WHERE CNP = :cnp";
+        $checkStmt = $this->conn->prepare($checkSql);
+        $checkStmt->bindValue(":cnp", $cnp, PDO::PARAM_STR);
+        $checkStmt->execute();
 
-        if(empty($data["oras"])){
-            $stmt->bindValue(":oras", null, PDO::PARAM_NULL);
+        $existingCount = $checkStmt->fetchColumn();
+
+        if ($existingCount > 0) {
+            return -1;
         } else {
-            $stmt->bindValue(":oras", $data["oras"], PDO::PARAM_STR);
-        }
+            $sql = "INSERT INTO persoana (CNP, Nume, Prenume, Oras, Tara, Data_de_nastere)
+                    VALUES (:cnp, :nume, :prenume, :oras, :tara, :data_nasterii)";
+            
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindValue(":cnp", $data["cnp"], PDO::PARAM_STR);
+            $stmt->bindValue(":nume", $data["nume"], PDO::PARAM_STR);
+            $stmt->bindValue(":prenume", $data["prenume"], PDO::PARAM_STR);
 
-        if(empty($data["tara"])){
-            $stmt->bindValue(":tara", null, PDO::PARAM_NULL);
-        } else {
-            $stmt->bindValue(":tara", $data["tara"], PDO::PARAM_STR);
-        }
-        
-        $stmt->bindValue(":data_nasterii", $data["data_nasterii"], PDO::PARAM_STR);
+            if(empty($data["oras"])){
+                $stmt->bindValue(":oras", null, PDO::PARAM_NULL);
+            } else {
+                $stmt->bindValue(":oras", $data["oras"], PDO::PARAM_STR);
+            }
 
-        $stmt->execute();
-        
-        return $this->conn->lastInsertId();
+            if(empty($data["tara"])){
+                $stmt->bindValue(":tara", null, PDO::PARAM_NULL);
+            } else {
+                $stmt->bindValue(":tara", $data["tara"], PDO::PARAM_STR);
+            }
+            
+            $stmt->bindValue(":data_nasterii", $data["data_nasterii"], PDO::PARAM_STR);
+
+            $stmt->execute();
+            
+            return $this->conn->lastInsertId();
+        }
     }
 
     public function update(string $id, array $data): int

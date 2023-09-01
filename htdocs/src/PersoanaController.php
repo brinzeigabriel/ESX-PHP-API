@@ -107,7 +107,12 @@ class PersoanaController
 
     private function respondCreated(string $id): void{
         http_response_code(201);
-        echo json_encode(["message" => "Persoana creata", "id" => $id]);
+        if($id != -1){
+            echo json_encode(["message" => "Persoana creata", "id" => $id]);
+        }
+        else {
+            echo json_encode(["message" => "Persoana deja exista"]);
+        }
     }
 
     private function respondUnprocessableEntity(array $errors): void{
@@ -116,10 +121,13 @@ class PersoanaController
     }
 
     private function getValidationErrors(array $data, bool $is_new = true):array{ //by default is_new is true
+        
         $errors = [];
+        
         if(empty($data))
         {
             $errors[] = "No data provided.";
+            return $errors;
         }
 
         //mandatory field
