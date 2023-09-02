@@ -1,4 +1,8 @@
 <?php
+/*
+In acest cod se genereaza un token de acces si un token de refresh
+utilizate pentru autentificarea utilizatorului si reautentificare daca nu s-a delogat
+*/
 
 $payload = [
     "sub" => $user["id"],

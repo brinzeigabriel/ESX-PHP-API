@@ -1,5 +1,8 @@
 <?php
-
+/*
+In aceasta clasa s-a implementat un format de afisaj al erorilor din cod dupa
+un sablon / template specificat
+*/
 class ErrorHandler
 {
 

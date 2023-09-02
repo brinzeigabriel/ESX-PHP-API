@@ -1,5 +1,8 @@
 <?php
-
+/*
+    In aceasta clasa se gestioneaza diveresele cererile legate de entitatea persoana 
+    si asigura ca aceste cereri sunt procesate in mod corespunzator
+*/
 class PersoanaController
 {
     public function __construct(private PersoanaGateway $gateway)
@@ -43,6 +46,7 @@ class PersoanaController
 // ################### /api/persoana/:id
             $persoana = $this->gateway->getById($id);
 
+            // verificam ca exista persoana respectiva in db
             if($persoana === false)
             {
                 $this->respondNotFound($id);
@@ -52,6 +56,7 @@ class PersoanaController
             switch ($method) {
 
                 case "GET":
+                    // afisam datele despre persoana cu id-ul specificat in url
                     echo json_encode($persoana);
                     break;
                 
@@ -68,7 +73,8 @@ class PersoanaController
                         $this->respondUnprocessableEntity($errors);
                         return;          
                     }
-
+                    
+                    // actualizam datele din tabela
                     $rows = $this->gateway->update($id,$data);
                     if(!empty($rows))
                         echo json_encode(["message" => "Persoana actualizata","rows"=>$rows]);
@@ -79,6 +85,7 @@ class PersoanaController
                     
                 case "DELETE":
                     
+                    // stergem persoana cu totul doar trimitand id-ul
                     $rows = $this->gateway->delete($id);
                     echo json_encode(["message" => "Persoana stearsa","rows"=>$rows]);
 
@@ -92,11 +99,15 @@ class PersoanaController
         }
     }
 
+    // in acesta functie am creat un mesaj personalizat pentru cazul in care
+    // se utilizeaza alte tipuri de request inafara celor valide
     private function respondMethodNotAllowed(string $allowed_methods): void{
         http_response_code(405);
         header("Allow: $allowed_methods");
     }
 
+    // in acesta functie am creat un mesaj personalizat pentru cazul in care
+    // persoana a fost sau nu gasita in baza de date
     private function respondNotFound(string $id): void{
         http_response_code(404);
         if(!empty($id))
@@ -105,6 +116,8 @@ class PersoanaController
         echo json_encode(["message" => "Nu a fost specificat niciun id"]);
     }
 
+    // in acesta functie am creat un mesaj personalizat pentru cazul in care
+    // persoana a fost sau nu creata
     private function respondCreated(string $id): void{
         http_response_code(201);
         if($id != -1){
@@ -115,13 +128,15 @@ class PersoanaController
         }
     }
 
+    // in aceasta functie afisam erorile intampinate
     private function respondUnprocessableEntity(array $errors): void{
         http_response_code(422);
         echo json_encode(["errors" => $errors]);
     }
 
-    private function getValidationErrors(array $data, bool $is_new = true):array{ //by default is_new is true
-        
+    // in aceasta functie validam toate erorile pentru fiecare caz posibil
+    private function getValidationErrors(array $data, bool $is_new = true):array //by default is_new is true if not specified
+    { 
         $errors = [];
         
         if(empty($data))

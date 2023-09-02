@@ -1,4 +1,11 @@
 <?php
+/*
+Gestionarea conexiunii la baza de date.
+In aceasta clasa utilizam logica de caching a conexiunii pentru a evita conexiunile 
+multiple si autentificarea pentru toate requesturile 
+atat timp cat utilizatorul este logat 
+astfel imbunatatim si performanta api-ului
+*/
 
 class Database
 {

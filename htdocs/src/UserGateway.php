@@ -1,5 +1,6 @@
 <?php
 
+//Aceasta clasa se ocupa de accesul si interogarea datelor utilizatorilor.
 class UserGateway
 {
     private PDO $conn;
@@ -9,6 +10,8 @@ class UserGateway
         $this->conn = $database->getConnection();
     }
     
+    // preluare de informatii din tabela user despre utilizatorul ce foloseste 
+    // cheia api introdusa in header
     public function getByAPIKey(string $key): array | false
     {
         $sql = "SELECT *
@@ -21,6 +24,7 @@ class UserGateway
         
         $stmt->execute();
         
+        //obtinerea rezultatului unei interogari sql sub forma de vector asociat
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 

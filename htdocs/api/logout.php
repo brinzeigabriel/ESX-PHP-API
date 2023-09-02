@@ -1,5 +1,10 @@
 <?php
 
+/*
+Idem login.php, cu logica ca primeste un token JWT intr-o cerere POST
+il valideaza, apoi il sterge din baza de date la delogarea utilizatorului
+*/
+
 declare(strict_types=1);
 
 require __DIR__ . "/bootstrap.php";
@@ -40,18 +45,3 @@ $database = new Database($_ENV["DB_HOST"],
 $refresh_token_gateway = new RefreshTokenGateway($database, $_ENV["SECRET_KEY"]);
 
 $refresh_token_gateway->delete($data["token"]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
